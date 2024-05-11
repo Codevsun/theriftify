@@ -12,6 +12,41 @@
     />
   </head>
   <body>
+
+    <?php
+session_start();
+if(isset($_POST['login'])){
+
+    session_start();
+    require('db_con.php');
+
+    $username=$_POST['email'];
+    $password=$_POST['password'];
+    $remember=$_POST['remember'];
+
+    if($remember==1){
+         setcookie('uname',$username,time()+60*60,"/");
+         setcookie('upass',$password,time()+60*60,"/");
+     }
+
+    $sql="select * from admins where Admin_Email='$username' && Admin_Password='$password'";
+
+    $query=mysqli_query($connection, $sql) or die("Failed with loging in.");
+    $count=mysqli_num_rows($query);
+
+    if($count==1){
+        $_SESSOIN['user']=$username;
+        header("Location: index.html");
+    }
+
+    else{
+        echo "<script type='text/javascript'>alert('Email or/and password is incorrect, please try again!');</script>";
+        
+    }
+
+}
+
+?>
     <!-- NAV BAR  -->
     <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
       <div class="container-fluid">
@@ -78,15 +113,17 @@
         </div>
       </div>
     </nav>
+
     <div class="container" style="margin-top: 149px; margin-bottom: 400px">
       <main class="form-signin">
         <div class="row justify-content-center">
           <div class="col-md-6">
-            <form action="index.html" method="POST">
+            <form id="auth" action="AdminAuthentication.php" method="POST">
               <h1 class="h3 mb-3 fw-normal text-center">Sign In As an Admin</h1>
               <div class="form-floating mb-3">
                 <input
                   type="email"
+                  name="email"
                   class="form-control"
                   id="floatingInput"
                   placeholder="name@example.com"
@@ -97,6 +134,7 @@
               <div class="form-floating mb-3">
                 <input
                   type="password"
+                  name="password"
                   class="form-control"
                   id="floatingPassword"
                   placeholder="Password"
@@ -107,15 +145,19 @@
               <div class="form-check mb-3">
                 <input
                   class="form-check-input"
+                  name="remember"
                   type="checkbox"
-                  value="remember-me"
                   id="flexCheckDefault"
                 />
                 <label class="form-check-label" for="flexCheckDefault">
                   Remember me
                 </label>
               </div>
-              <button class="btn btn-secondary w-100" type="submit">
+              <button
+                class="btn btn-secondary w-100"
+                type="submit"
+                name="login"
+              >
                 Sign in
               </button>
             </form>
