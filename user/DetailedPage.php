@@ -1,3 +1,62 @@
+<?php
+// Start the session
+session_start();
+
+require_once "db_connection.php";
+
+// Check if the ID parameter exists in the URL
+if (isset($_GET['id'])) {
+    // Sanitize the ID parameter to prevent SQL injection
+    $product_id = htmlspecialchars($_GET['id']);
+
+    // Query to fetch product details based on the product ID
+    $query = "SELECT * FROM products WHERE Product_ID = '$product_id'";
+    $result = mysqli_query($connection, $query);
+
+    // Check if a product with the given ID exists
+    if (mysqli_num_rows($result) > 0) {
+        // Fetch product details
+        $row = mysqli_fetch_assoc($result);
+        $productId = $row['Product_ID'];
+        $productName = $row['Product_Name'];
+        $productDescription = $row['Product_Description'];
+        $productPrice = $row['Product_Price'];
+        $productImage = $row['Product_Img_URL'];
+        $productQuantity = $row['Product_Quantity'];
+
+        // Store product information in an associative array
+        $product = array(
+            'id' => $productId,
+            'name' => $productName,
+            'description' => $productDescription,
+            'price' => $productPrice,
+            'image' => $productImage,
+            'quantity' => $productQuantity
+        );
+    } else {
+        // Redirect to a 404 page or handle the case when the product doesn't exist
+        header("Location: 404.php");
+        exit();
+    }
+}
+
+if (isset($_POST['add_to_cart'])) {
+  // Retrieve the product ID from the form submission
+  $product_id = $_POST['product_id'];
+
+  // Initialize the cart array if it doesn't exist
+  if (!isset($_SESSION['cart'])) {
+    $_SESSION['cart'] = array();
+  }
+
+  // Store the product ID in the session variable as part of an array
+  $_SESSION['cart'][] = $product_id;
+  
+}
+
+?>
+
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -34,7 +93,7 @@
           <!-- right side of navbar -->
 
           <li class="nav-item">
-            <a href="shoppingcart.html" class="nav-link"><i class="bi bi-bag" style="margin-right: 20px"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-bag" viewBox="0 0 16 16">
+            <a href="shoppingcart.php" class="nav-link"><i class="bi bi-bag" style="margin-right: 20px"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-bag" viewBox="0 0 16 16">
                   <path d="M8 1a2.5 2.5 0 0 1 2.5 2.5V4h-5v-.5A2.5 2.5 0 0 1 8 1m3.5 3v-.5a3.5 3.5 0 1 0-7 0V4H1v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V4zM2 5h12v9a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1z" />
                 </svg></i>Cart</a>
           </li>
@@ -53,50 +112,6 @@
     </div>
   </nav>
 
-  <!-- Main Content -->
-  <?php
-  require_once "db_connection.php";
-
-  // Check if the ID parameter exists in the URL
-  if (isset($_GET['id'])) {
-    // Sanitize the ID parameter to prevent SQL injection
-    $product_id = htmlspecialchars($_GET['id']);
-  }
-  $query = "SELECT * FROM products WHERE Product_ID = '$product_id'";
-  $result = mysqli_query($connection, $query);
-
-
-  $products = array();
-
-  // Check if there are any products in the database
-  if (mysqli_num_rows($result) > 0) {
-    // Loop through each row in the result set
-    while ($row = mysqli_fetch_assoc($result)) {
-      // Extract product information from the current row
-      $productId = $row['Product_ID'];
-      $productName = $row['Product_Name'];
-      $productDescription = $row['Product_Description'];
-      $productPrice = $row['Product_Price'];
-      $productImage = $row['Product_Img_URL'];
-      $productQuantity = $row['Product_Quantity'];
-
-
-      // Store product information in an associative array
-      $product = array(
-        'id' => $productId,
-        'name' => $productName,
-        'description' => $productDescription,
-        'price' => $productPrice,
-        'image' => $productImage,
-        'quantity' => $productQuantity
-      );
-
-      // Push the product array into the products array
-      $products[] = $product;
-    }
-  }
-
-  ?>
 
   <!-- Buttons Section -->
   <!-- Buttons with Dropdown Menus -->
@@ -134,12 +149,14 @@
       </div>
 
       <div class="add-to-cart-container">
-        <a href="./shoppingcart.html" class="add-to-cart-link">
-          <button class="add-to-cart-button" type="button" style="width: 120px; height: 40px; margin: 15px">
+        <form method="post">
+          <input type="hidden" name="product_id" value="<?php echo $product['id']; ?>">
+          <button class="add-to-cart-button" type="submit" name="add_to_cart" style="width: 120px; height: 40px; margin: 15px">
             Add to Cart
           </button>
-        </a>
+        </form>
       </div>
+
 
       <div class="product-description">
         <details>
@@ -190,6 +207,9 @@
       }
     }
   </script>
+
+
+
 </body>
 
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
@@ -207,6 +227,8 @@
 
     if (quantity === 0) {
       addButton.disabled = true;
+      addButton.style.backgroundColor = 'lightgrey';
+      addButton.textContent = 'Out of stock';
       quantityInput.disabled = true;
       quantityLabel.textContent = 'Not Available';
     } else {
