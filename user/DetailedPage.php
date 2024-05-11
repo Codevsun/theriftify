@@ -6,54 +6,42 @@ require_once "db_connection.php";
 
 // Check if the ID parameter exists in the URL
 if (isset($_GET['id'])) {
-    // Sanitize the ID parameter to prevent SQL injection
-    $product_id = htmlspecialchars($_GET['id']);
+    $product_id = $_GET['id']; // Get the raw product ID
 
-    // Query to fetch product details based on the product ID
-    $query = "SELECT * FROM products WHERE Product_ID = '$product_id'";
-    $result = mysqli_query($connection, $query);
+    // Prepare a statement to fetch product details
+    $stmt = $connection->prepare("SELECT * FROM products WHERE Product_ID = ?");
+    $stmt->bind_param("s", $product_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
 
-    // Check if a product with the given ID exists
-    if (mysqli_num_rows($result) > 0) {
-        // Fetch product details
-        $row = mysqli_fetch_assoc($result);
-        $productId = $row['Product_ID'];
-        $productName = $row['Product_Name'];
-        $productDescription = $row['Product_Description'];
-        $productPrice = $row['Product_Price'];
-        $productImage = $row['Product_Img_URL'];
-        $productQuantity = $row['Product_Quantity'];
-
-        // Store product information in an associative array
+    if ($result->num_rows > 0) {
+        $row = $result->fetch_assoc();
         $product = array(
-            'id' => $productId,
-            'name' => $productName,
-            'description' => $productDescription,
-            'price' => $productPrice,
-            'image' => $productImage,
-            'quantity' => $productQuantity
+            'id' => $row['Product_ID'],
+            'name' => $row['Product_Name'],
+            'description' => $row['Product_Description'],
+            'price' => $row['Product_Price'],
+            'image' => $row['Product_Img_URL'],
+            'quantity' => $row['Product_Quantity']
         );
     } else {
-        // Redirect to a 404 page or handle the case when the product doesn't exist
         header("Location: 404.php");
         exit();
     }
+
+    if (isset($_POST['add_to_cart'])) {
+        $quantity = isset($_POST['quantity']) ? intval($_POST['quantity']) : 1; // Default to 1 if quantity is not set
+        if (isset($_SESSION['cart'])) {
+            if (array_key_exists($product['id'], $_SESSION['cart'])) {
+                $_SESSION['cart'][$product['id']] += $quantity;
+            } else {
+                $_SESSION['cart'][$product['id']] = $quantity;
+            }
+        } else {
+            $_SESSION['cart'] = array($product['id'] => $quantity);
+        }
+    }
 }
-
-if (isset($_POST['add_to_cart'])) {
-  // Retrieve the product ID from the form submission
-  $product_id = $_POST['product_id'];
-
-  // Initialize the cart array if it doesn't exist
-  if (!isset($_SESSION['cart'])) {
-    $_SESSION['cart'] = array();
-  }
-
-  // Store the product ID in the session variable as part of an array
-  $_SESSION['cart'][] = $product_id;
-  
-}
-
 ?>
 
 
@@ -138,25 +126,24 @@ if (isset($_POST['add_to_cart'])) {
       <p class="quantity-label">In stock: <?php echo $product['quantity']; ?></p>
 
       <!-- Quantity Selector -->
-      <div class="quantity-selector">
-        <button onclick="decrementQuantity()" aria-label="Decrease quantity">
-          -
-        </button>
-        <input type="number" id="quantity" value="1" min="1" readonly />
-        <button onclick="incrementQuantity()" aria-label="Increase quantity">
-          +
-        </button>
-      </div>
-
-      <div class="add-to-cart-container">
-        <form method="post">
-          <input type="hidden" name="product_id" value="<?php echo $product['id']; ?>">
-          <button class="add-to-cart-button" type="submit" name="add_to_cart" style="width: 120px; height: 40px; margin: 15px">
-            Add to Cart
+      <form method="post">
+        <div class="quantity-selector">
+          <button onclick="decrementQuantity()" aria-label="Decrease quantity">
+            -
           </button>
-        </form>
-      </div>
+          <input type="number" id="quantity" value="1" min="1" readonly name="quantity" />
+          <button onclick="incrementQuantity()" aria-label="Increase quantity">
+            +
+          </button>
+        </div>
 
+        <div class="add-to-cart-container">
+            <input type="hidden" name="product_id" value="<?php echo $product['id']; ?>">
+            <button class="add-to-cart-button" type="submit" name="add_to_cart" style="width: 120px; height: 40px; margin: 15px">
+              Add to Cart
+            </button>
+        </div>
+      </form>
 
       <div class="product-description">
         <details>

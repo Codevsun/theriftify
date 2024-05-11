@@ -2,7 +2,6 @@
 // Start session
 session_start();
 
-
 $totalQuantity = 0;
 $totalPrice = 0;
 // Initialize an empty array to store products
@@ -11,52 +10,44 @@ $products = array();
 // Assuming you have already established a database connection
 require_once "db_connection.php";
 
-// Check if the cart session variable exists and if it's not empty
-if (isset($_SESSION['cart']) && !empty($_SESSION['cart'])) {
-  // Loop through each product ID in the cart
-  foreach ($_SESSION['cart'] as $product_id) {
-    // Query to fetch product details based on product ID
-    $query = "SELECT * FROM products WHERE Product_ID = $product_id";
-    $result = mysqli_query($connection, $query);
-
-    // Check if the query was successful
-    if ($result && mysqli_num_rows($result) > 0) {
-      // Fetch product details
-      $row = mysqli_fetch_assoc($result);
-      $productId = $row['Product_ID'];
-      $productName = $row['Product_Name'];
-      $productDescription = $row['Product_Description'];
-      $productPrice = $row['Product_Price'];
-      $productImage = $row['Product_Img_URL'];
-      $productQuantity = $row['Product_Quantity'];
-
-      // Store product information in an associative array
-      $product = array(
-        'id' => $productId,
-        'name' => $productName,
-        'description' => $productDescription,
-        'price' => $productPrice,
-        'image' => $productImage,
-        'quantity' => $productQuantity
-      );
-
-      // Add the product to the products array
-      $products[] = $product;
-    } else {
-      // Redirect to a 404 page or handle the case when the product doesn't exist
-      header("Location: 404.php");
-      exit();
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    if (isset($_POST['delete_product_id'])) {
+        $delete_product_id = $_POST['delete_product_id'];
+        // Remove the product from the cart if it exists
+        if (isset($_SESSION['cart'][$delete_product_id])) {
+            unset($_SESSION['cart'][$delete_product_id]);
+        }
     }
-  }
-} else {
-  // If the cart is empty, display a message
-  echo "Your shopping cart is empty!";
 }
 
+if (isset($_SESSION['cart']) && !empty($_SESSION['cart'])) {
+    $products = []; // Array to hold product details
 
+    foreach ($_SESSION['cart'] as $product_id => $quantity) {
+        $stmt = $connection->prepare("SELECT * FROM products WHERE Product_ID = ?");
+        $stmt->bind_param("s", $product_id);
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        if ($result && $result->num_rows > 0) {
+            $row = $result->fetch_assoc();
+            $product = array(
+                'id' => $row['Product_ID'],
+                'name' => $row['Product_Name'],
+                'description' => $row['Product_Description'],
+                'price' => $row['Product_Price'],
+                'image' => $row['Product_Img_URL'],
+                'quantity' => $quantity
+            );
+            $products[] = $product;
+            $totalQuantity += $quantity;
+            $totalPrice += $product['price'] * $quantity;
+        }
+    }
+} else {
+    echo "Your shopping cart is empty!";
+}
 ?>
-
-
 
 <!DOCTYPE html>
 <html>
@@ -97,7 +88,7 @@ if (isset($_SESSION['cart']) && !empty($_SESSION['cart'])) {
 
           <!-- right side of navbar -->
           <li class="nav-item">
-            <a href="shoppingcart.html" class="nav-link"><i class="bi bi-bag" style="margin-right: 20px"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-bag" viewBox="0 0 16 16">
+            <a href="shoppingcart.php" class="nav-link"><i class="bi bi-bag" style="margin-right: 20px"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-bag" viewBox="0 0 16 16">
                   <path d="M8 1a2.5 2.5 0 0 1 2.5 2.5V4h-5v-.5A2.5 2.5 0 0 1 8 1m3.5 3v-.5a3.5 3.5 0 1 0-7 0V4H1v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V4zM2 5h12v9a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1z" />
                 </svg></i>Cart</a>
           </li>
@@ -133,19 +124,18 @@ if (isset($_SESSION['cart']) && !empty($_SESSION['cart'])) {
               <h4><b>Shopping Cart</b></h4>
             </div>
             <div class="col align-self-center text-right text-muted">
-              2 items
+              <?php echo $totalQuantity; ?> items
             </div>
           </div>
         </div>
         <div class="row border-top border-bottom">
-    <?php foreach ($products as $product): ?>
+        <?php foreach ($products as $product): ?>
         <div class="row main align-items-center">
             <div class="col-2">
                 <!-- Display product image -->
                 <img class="img-fluid" src="<?php echo $product['image']; ?>" />
             </div>
             <div class="col">
-              
                 <!-- Display products name -->
                 <div class="row"><?php echo $product['name']; ?></div>
             </div>
@@ -153,17 +143,15 @@ if (isset($_SESSION['cart']) && !empty($_SESSION['cart'])) {
                 <!-- Quantity control buttons -->
                 <a href="#">-</a><a href="#" class="border"><?php echo $product['quantity']; ?></a><a href="#">+</a>
             </div>
-            <div class="col">
-                <!-- Display products price -->
+            <form class="col" method="POST">
                 $ <?php echo $product['price']; ?>
-                <!-- Close button -->
-                <span class="close">✕</span>
-            </div>
+                <button type="submit" class="close" style="background-color: transparent; border: none;">x</button>
+                <input type="hidden" name="delete_product_id" value="<?php echo $product['id']; ?>" style="display: none;">
+            </form>
         </div>
         <?php
         // Update total quantity and price
         $totalQuantity += $product['quantity'];
-        $totalPrice += $product['price'];
         ?>
     <?php endforeach; ?>
 </div>
@@ -194,7 +182,7 @@ if (isset($_SESSION['cart']) && !empty($_SESSION['cart'])) {
         </form>
         <div class="row" style="border-top: 1px solid rgba(0, 0, 0, 0.1); padding: 2vh 0">
           <div class="col">TOTAL PRICE</div>
-          <div class="col text-right">$ 671.75</div>
+          <div class="col text-right">$ <?php echo $totalPrice; ?></div>
         </div>
         <a href="thanks.html"> <button class="btn">CHECKOUT</button></a>
       </div>
