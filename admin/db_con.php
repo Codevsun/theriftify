@@ -6,11 +6,10 @@ $database = "theriftify"; // Replace with your MySQL database name
 
 // Create connection
 
-$connection = mysqli_connect('localhost', 'root', 'your_password', 'theriftify');
+$connection = mysqli_connect($servername, $username,$password, $database);
 
 if (!$connection) {
     die("Connection failed: " . mysqli_connect_error());
 }
 
-echo "Connected successfully";
-mysqli_close($connection);
+?>
