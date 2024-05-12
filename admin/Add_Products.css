@@ -1,5 +1,4 @@
-/* anything related to navbar */
-/* Set the background color to white */
+
 .navbar.navbar-light.bg-light {
     background-color: white !important;
 
@@ -62,7 +61,7 @@ footer p {
 }
 
 
-.container {
+.info-container {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -98,46 +97,71 @@ footer p {
     
 }
 
-.Image_container {
+/* image styling */
+
+.product-image {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    
+  }
+  .upload-container {
     display: flex;
     justify-content: center;
     align-items: center;
     flex-direction: column;
     width: 100%;
-    height: 240x;
+    height: 240px;
     border: 1px solid;
     border-radius: 8px;
     margin-top: 30px;
     margin-bottom: 30px;
     padding: 20px;
+  }
+
+  .image-icon {
+    font-size: 100px;
+  }
+
+  .upload-text {
+    font-family: "Nunito", sans-serif;
+    font-size: 20px;
+    margin-top: 10px;
+  }
+  .upload-button {
+    background-color: black;
+    text-align: center;
+    padding-bottom: 5px;
+    margin-bottom: 20px;
+    border-radius: 8px;
+    display: inline-block;
+    color: aliceblue;
+    width: 100%;
+    height: 30px;
+    cursor: pointer;
+  }
+
+  #image-upload {
+    display: none;
+  }
+
+  .image-container {
+    width: 100%;
+    height: auto;
+    overflow: hidden;
+  }
+
+  #image-preview {
+    display: flex;
+    width: auto; 
+    max-width: 100%; 
+    height: auto;
+    object-fit: cover;
+   
+  }
    
 
-}
-
-.Image_container .icon  {
-    font-size: 100px;
-
-
-}
-
-.Select_Image_button {
-    display: block;
-    color: aliceblue;
-    background-color: black;
-    width: 100%;
-    height: 10x;
-    border-radius: 8px;
-    border: none;
-    padding-left: 20px;
-    padding-right: 20px;
-    padding-bottom: 5px;
-    padding-top: 5px;
-    cursor: pointer;
-}
-
-.Select_Image_button:hover {
-    background-color: rgb(62, 62, 64);
-}
 
 .Add_product_button {
     display: flex;
@@ -150,8 +174,9 @@ footer p {
     border-radius: 8px;
     padding-left: 40px;
     padding-right: 40px;
-    padding-bottom: 5px;
-    padding-top: 5px;
+    padding-top: 8px;
+    padding-bottom: 8px;
+    margin-top: 10px;
     margin-bottom: 20px;
     cursor: pointer;
     
@@ -160,3 +185,4 @@ footer p {
 .Add_product_button:hover {
     background-color: rgb(62, 62, 64);
 }
+
