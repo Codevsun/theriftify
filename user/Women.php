@@ -10,6 +10,162 @@
   <link rel="stylesheet" href="MenWomen.css" />
   <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,700|Roboto&display=swap" rel="stylesheet" />
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous" />
+  <style>
+    .modal-overlay {
+      position: fixed;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      justify-content: center;
+      align-items: center;
+      display: flex;
+    }
+
+    .modal-overlay {
+      display: none;
+      /* Add other styling as needed */
+    }
+
+    .modal-content {
+      background-color: white;
+      padding: 20px;
+      border-radius: 5px;
+      width: 100%;
+      max-width: 600px;
+      /* Set a maximum width for the modal */
+    }
+
+    * {
+      font-family: "Nunito", sans-serif;
+      margin: 0;
+      padding: 0;
+      scroll-behavior: smooth;
+      box-sizing: border-box;
+    }
+
+    /* body {
+     width: 100%;
+     height: 100vh;
+     display: flex;
+     flex-direction: column;
+     color: black;
+     /* background: #ffffff; */
+    /* justify-content: center;
+     letter-spacing: 0.2em;
+   } */
+    .contact-container {
+      max-width: 960px;
+      margin: auto;
+      width: 100%;
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1.5rem;
+      background: #cccccc;
+      box-shadow: 0 0 1rem hsla(0 0 0 / 16%);
+      border-radius: 0.5rem;
+      overflow: hidden;
+      letter-spacing: 0.2em;
+    }
+
+    .form-container {
+      padding: 20px;
+      letter-spacing: 0.2em;
+    }
+
+    .form-container h3 {
+      font-size: 1.2rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+      letter-spacing: 0.2em;
+    }
+
+    .contact-form {
+      display: grid;
+      row-gap: 1rem;
+    }
+
+    .contact-form input,
+    .contact-form button,
+    .contact-form textarea {
+      width: 100%;
+      border: none;
+      outline: none;
+      background: #ffffff;
+      padding: 10px;
+      font-size: 0.9rem;
+      color: black;
+      border-radius: 0.4rem;
+      letter-spacing: 0.2em;
+    }
+
+    .contact-form textarea {
+      resize: none;
+      height: 200px;
+    }
+
+    .contact-form .send-button {
+      border: none;
+      outline: none;
+      background: #ffffff;
+      font-size: 1rem;
+      font-weight: 500;
+      text-transform: uppercase;
+      cursor: pointer;
+      letter-spacing: 0.2em;
+    }
+
+    .contact-form .send-button:hover {
+      background: hsla(0, 0%, 94%, 0.8);
+      transition: 0.3s all linear;
+    }
+
+    .map iframe {
+      width: 100%;
+      height: 100%;
+    }
+
+    /* responsivie */
+    @media (max-width: 964px) {
+      .contact-container {
+        margin: 0 auto;
+        width: 90%;
+      }
+    }
+
+    @media (max-width: 700px) {
+      .contact-container {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+        margin-top: 20rem !important;
+      }
+
+      .map iframe {
+        height: 400px;
+      }
+    }
+
+    .close {
+      color: #aaaaaa;
+      float: right;
+      font-size: 28px;
+      font-weight: bold;
+    }
+
+    .close:hover,
+    .close:focus {
+      color: #000;
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    .contact-popup {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+  </style>
 </head>
 
 <body>
@@ -49,7 +205,7 @@
                 </svg></i>About</a>
           </li>
           <li class="nav-item">
-            <a href="contactus.html" class="nav-link"><i class="bi bi-bag" style="margin-right: 20px"><svg width="15" height="15" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <a href="#" class="nav-link" id="contactLink" onclick="showContactPopup()"><i class="bi bi-bag" style="margin-right: 20px"><svg width="15" height="15" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path d="M1 2C0.447715 2 0 2.44772 0 3V12C0 12.5523 0.447715 13 1 13H14C14.5523 13 15 12.5523 15 12V3C15 2.44772 14.5523 2 14 2H1ZM1 3L14 3V3.92494C13.9174 3.92486 13.8338 3.94751 13.7589 3.99505L7.5 7.96703L1.24112 3.99505C1.16621 3.94751 1.0826 3.92486 1 3.92494V3ZM1 4.90797V12H14V4.90797L7.74112 8.87995C7.59394 8.97335 7.40606 8.97335 7.25888 8.87995L1 4.90797Z" fill="currentColor" fill-rule="evenodd" clip-rule="evenodd"></path>
                 </svg></i>contact us
             </a>
@@ -58,6 +214,34 @@
       </div>
     </div>
   </nav>
+
+  <div class="modal-overlay">
+
+    <div class="modal-content">
+
+      <span class="close">&times;</span>
+      <!-- Your contact form goes here -->
+
+      <div class="contact-container">
+        <!-- form -->
+        <div class="form-container">
+
+          <h3>Contact Us</h3>
+          <form action="https://formsubmit.co/Theriftify@gmail.com" method="POST" class="contact-form">
+            <input type="text" name="name" id="name" placeholder="Enter your Name.." />
+            <input type="email" name="email" id="email" placeholder="Enter your Email.." />
+            <textarea name="message" id="message" cols="30" rows="10" placeholder="Write your Message Here.."></textarea>
+            <button type="submit" value="Send" class="send-button">Send</button>
+          </form>
+
+        </div>
+        <!-- map -->
+        <div class="map">
+          <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3574.180323779947!2d50.18744047422594!3d26.385361276965362!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3e49efcf3bf6ab17%3A0xeef45f58f7dd7827!2sIAU%20Building%20650!5e0!3m2!1sen!2ssa!4v1710355976125!5m2!1sen!2ssa" style="border: 0" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <?php
   require_once "db_connection.php";
@@ -159,47 +343,118 @@
       <?php endforeach; ?>
     </div>
 
-
     <script>
-      let selectmenu = document.querySelector('#categoryDropdown');
-      selectmenu.addEventListener('click', function(e) {
-        let selectedCategory = e.target.value;
-        window.location.href = 'Women.php?category=' + selectedCategory;
+      document.addEventListener("DOMContentLoaded", function() {
+        // Get the modal element
+        var modal = document.querySelector(".modal-overlay");
+
+        // Get the <span> element that closes the modal
+        var span = modal.querySelector(".close");
+
+        // When the user clicks on <span> (x), close the modal
+        span.onclick = function() {
+          modal.style.display = "none";
+        };
+
+        // When the user clicks anywhere outside of the modal, close it
+        window.onclick = function(event) {
+          if (event.target == modal) {
+            modal.style.display = "none";
+          }
+        };
+      });
+
+      // Get the "Contact Us" link
+      var contactLink = document.getElementById("contactLink");
+
+      // When the user clicks on "Contact Us" link, open the modal
+      document.addEventListener("click", function(event) {
+        var modal = document.querySelector(".modal-overlay");
+        if (event.target === modal) {
+          modal.style.display = "none";
+        }
+      });
+      // Form validation
+      var form = document.querySelector(".contact-form");
+      form.addEventListener("submit", function(event) {
+        var name = document.getElementById("name").value.trim();
+        var email = document.getElementById("email").value.trim();
+        var message = document.getElementById("message").value.trim();
+
+        if (name === "" || email === "" || message === "") {
+          alert("Please fill in all fields.");
+          event.preventDefault();
+        }
       });
     </script>
+</body>
 
 
 
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js" integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy" crossorigin="anonymous"></script>
-    <!-- Footer -->
-    <footer class="bg-dark text-light py-3 text-center" style="margin-top: -159">
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js" integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy" crossorigin="anonymous"></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    var modal = document.querySelector(".modal-overlay");
+    var span = modal.querySelector(".close");
+    var contactLink = document.getElementById("contactLink");
 
-      <div class="container">
-        <div class="row">
-          <div class="col">
-            <a class="nav-link text-light" href="contactus.html">Contact Us</a>
-          </div>
-          <div class="col">
-            <a class="nav-link text-light" href="#">FAQs</a>
-          </div>
-          <div class="col">
-            <a class="nav-link text-light" href="#">Country/Region: Saudi Arabia</a>
-          </div>
-        </div>
-        <div class="row mt-2">
-          <!-- Added margin top to create space -->
-          <div class="col">
-            <p>
-              THRIFTIFY and the THRIFTIFY logo are trademarks of Thriftify and
-              are registered or pending registration in numerous jurisdictions
-              around the world. &copy; Copyright 2024 Thriftify. All rights
-              reserved.
-            </p>
-          </div>
-        </div>
+    contactLink.addEventListener("click", function(event) {
+      event.preventDefault();
+      modal.style.display = "flex";
+    });
+
+    span.onclick = function() {
+      modal.style.display = "none";
+    };
+
+    window.onclick = function(event) {
+      if (event.target == modal) {
+        modal.style.display = "none";
+      }
+    };
+
+    // Form validation
+    var form = document.getElementById("contactForm");
+    form.addEventListener("submit", function(event) {
+      var name = document.getElementById("name").value.trim();
+      var email = document.getElementById("email").value.trim();
+      var message = document.getElementById("message").value.trim();
+
+      if (name === "" || email === "" || message === "") {
+        alert("Please fill in all fields.");
+        event.preventDefault();
+      }
+    });
+  });
+</script>
+<footer class="bg-dark text-light py-3 text-center" style="margin-top: -159">
+
+  <div class="container">
+    <div class="row">
+      <div class="col">
+        <a class="nav-link text-light" href="contactus.html">Contact Us</a>
       </div>
-    </footer>
+      <div class="col">
+        <a class="nav-link text-light" href="#">FAQs</a>
+      </div>
+      <div class="col">
+        <a class="nav-link text-light" href="#">Country/Region: Saudi Arabia</a>
+      </div>
+    </div>
+    <div class="row mt-2">
+      <!-- Added margin top to create space -->
+      <div class="col">
+        <p>
+          THRIFTIFY and the THRIFTIFY logo are trademarks of Thriftify and
+          are registered or pending registration in numerous jurisdictions
+          around the world. &copy; Copyright 2024 Thriftify. All rights
+          reserved.
+        </p>
+      </div>
+    </div>
+  </div>
+</footer>
 
 </html>
