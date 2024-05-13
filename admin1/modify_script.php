@@ -19,7 +19,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     // Handle image upload
     if ($_FILES['productimage']['error'] === UPLOAD_ERR_OK) {
-        $uploadDir = 'images/'; // Directory to upload images
+        $uploadDir = '../images/'; // Directory to upload images
         $uploadFile = $uploadDir . basename($_FILES['productimage']['name']);
 
         if (move_uploaded_file($_FILES['productimage']['tmp_name'], $uploadFile)) {

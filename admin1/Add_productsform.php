@@ -15,9 +15,9 @@
 
 
     <body>
-    <?php include "./partials/header.html" ?>
-
-
+        <!-- Navbar -->
+    
+        <?php include "./partials/header.html" ?>
     <!-- Main Content -->
     <!-- Buttons Section -->
     <!-- Buttons with Dropdown Menus -->
@@ -27,8 +27,8 @@
     </div>
 
         <div class="tittle_conatiner">
-            <h3 style="margin-top:40px;">Add New Product</h3>
-            
+            <h3>Add New Product</h3>
+            <hr class="horz-line">  
         </div>
 
        
@@ -53,9 +53,12 @@
               <label for="ProductSize" class="form-label">Size</label>
               <select class="form-select" name="ProductSize" id="ProductSize" >
                 <option value="">Choose size...</option>
-                <option value="small">S</option>
-                <option value="medium">M</option>
-                
+                <option value="XS">XS</option>
+                <option value="S">S</option>
+                <option value="M">M</option>
+                <option value="L">L</option>
+                <option value="XL">XL</option>
+                <option value="XXL">XXL</option>
               </select>
             </div>
 
@@ -76,8 +79,8 @@
               <label for="ProductCategory" class="form-label">Product Category</label>
               <select class="form-select" name="ProductCategory" id="ProductCategory">
                 <option value="">Choose category...</option>
-                <option value="men">Men</option>
-                <option value="women">Women</option>
+                <option value="Men">Men</option>
+                <option value="Women">Women</option>
               </select>
             </div>
         
@@ -110,4 +113,40 @@
 
 
                 
-        <?php include "./partials/footer.html" ?>
+                <!-- Footer -->
+        <footer class="bg-dark text-light py-3 text-center ">
+            <div class="container">
+                <div class="row">
+                    <div class="col">
+                        <a class="nav-link text-light" href="#">Contact Us</a>
+                    </div>
+                    <div class="col">
+                        <a class="nav-link text-light" href="#">FAQs</a>
+                    </div>
+                    <div class="col">
+                        <a class="nav-link text-light" href="#">Country/Region: Saudi Arabia</a>
+                    </div>
+                </div>
+                <div class="row mt-2"> <!-- Added margin top to create space -->
+                    <div class="col">
+                        <p>THRIFTIFY and the THRIFTIFY logo are trademarks of Thriftify and are registered or pending
+                            registration in
+                            numerous jurisdictions around the world. &copy; Copyright 2024 Thriftify. All rights
+                            reserved.</p>
+                    </div>
+                </div>
+            </div>
+        </footer>
+            </div>
+             
+            <script src="Add_Products.js"></script>
+            <script src="/docs/5.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+            <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
+            integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
+            crossorigin="anonymous"></script>
+            <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+            <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"
+            integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy"
+            crossorigin="anonymous"></script>
+    </body>
+</html>

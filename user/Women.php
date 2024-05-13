@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
-
+ 
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -22,12 +22,12 @@
       align-items: center;
       display: flex;
     }
-
+ 
     .modal-overlay {
       display: none;
       /* Add other styling as needed */
     }
-
+ 
     .modal-content {
       background-color: white;
       padding: 20px;
@@ -36,7 +36,7 @@
       max-width: 600px;
       /* Set a maximum width for the modal */
     }
-
+ 
     * {
       font-family: "Nunito", sans-serif;
       margin: 0;
@@ -44,7 +44,7 @@
       scroll-behavior: smooth;
       box-sizing: border-box;
     }
-
+ 
     /* body {
      width: 100%;
      height: 100vh;
@@ -68,24 +68,24 @@
       overflow: hidden;
       letter-spacing: 0.2em;
     }
-
+ 
     .form-container {
       padding: 20px;
       letter-spacing: 0.2em;
     }
-
+ 
     .form-container h3 {
       font-size: 1.2rem;
       font-weight: 600;
       margin-bottom: 1rem;
       letter-spacing: 0.2em;
     }
-
+ 
     .contact-form {
       display: grid;
       row-gap: 1rem;
     }
-
+ 
     .contact-form input,
     .contact-form button,
     .contact-form textarea {
@@ -99,12 +99,12 @@
       border-radius: 0.4rem;
       letter-spacing: 0.2em;
     }
-
+ 
     .contact-form textarea {
       resize: none;
       height: 200px;
     }
-
+ 
     .contact-form .send-button {
       border: none;
       outline: none;
@@ -115,17 +115,17 @@
       cursor: pointer;
       letter-spacing: 0.2em;
     }
-
+ 
     .contact-form .send-button:hover {
       background: hsla(0, 0%, 94%, 0.8);
       transition: 0.3s all linear;
     }
-
+ 
     .map iframe {
       width: 100%;
       height: 100%;
     }
-
+ 
     /* responsivie */
     @media (max-width: 964px) {
       .contact-container {
@@ -133,33 +133,33 @@
         width: 90%;
       }
     }
-
+ 
     @media (max-width: 700px) {
       .contact-container {
         grid-template-columns: 1fr;
         gap: 1rem;
         margin-top: 20rem !important;
       }
-
+ 
       .map iframe {
         height: 400px;
       }
     }
-
+ 
     .close {
       color: #aaaaaa;
       float: right;
       font-size: 28px;
       font-weight: bold;
     }
-
+ 
     .close:hover,
     .close:focus {
       color: #000;
       text-decoration: none;
       cursor: pointer;
     }
-
+ 
     .contact-popup {
       display: flex;
       justify-content: center;
@@ -167,25 +167,25 @@
     }
   </style>
 </head>
-
+ 
 <body>
-
+ 
   <?php include "./partials/navbar.html" ?>
-
-
+ 
+ 
   <?php
   require_once "db_connection.php";
-
+ 
   // Initialize selected category variable
   $selectedCategory = $_GET['category'] ?? 'women'; // Default to 'women' if category is not set
-
+ 
   // Query to select products based on the selected category
-  $query = "SELECT * FROM products WHERE Product_Category = '$selectedCategory'";
+  $query = "SELECT * FROM products WHERE Product_Category = '$selectedCategory' AND Product_Quantity > 0";
   $result = mysqli_query($connection, $query);
-
+ 
   // Initialize an array to store product information
   $products = array();
-
+ 
   // Check if there are any products in the database
   if (mysqli_num_rows($result) > 0) {
     // Loop through each row in the result set
@@ -196,7 +196,7 @@
       $productDescription = $row['Product_Description'];
       $productPrice = $row['Product_Price'];
       $productImage = $row['Product_Img_URL'];
-
+ 
       // Store product information in an associative array
       $product = array(
         'id' => $productId,
@@ -205,57 +205,51 @@
         'price' => $productPrice,
         'image' => $productImage
       );
-
+ 
       // Push the product array into the products array
       $products[] = $product;
     }
   }
-
-
-  $queryMaxID = "SELECT COUNT(*) AS max_id FROM products WHERE Product_Category = '$selectedCategory'";
+ 
+ 
+  $queryMaxID = "SELECT COUNT(*) AS max_id FROM products WHERE Product_Category = '$selectedCategory' AND Product_Quantity > 0";
   $resultMaxID = mysqli_query($connection, $queryMaxID);
-
+ 
   // Initialize a variable to store the maximum ID
   $maxID = 0;
-
+ 
   // Check if the query was successful
   if ($resultMaxID) {
     // Fetch the result as an associative array
     $rowMaxID = mysqli_fetch_assoc($resultMaxID);
-
+ 
     // Get the maximum ID
     $maxID = $rowMaxID['max_id'];
   } else {
     // Display an error message if the query fails
     echo "Error: " . mysqli_error($connection);
   }
-
-
-
+ 
   ?>
   <!-- Main Content -->
   <!-- Buttons Section -->
-
+ 
   <!-- Buttons with Dropdown Menus -->
   <div class="d-flex justify-content-between">
     <div style="margin-top: 60px">
       <select id="categoryDropdown" class="form-select m-3">
-        <option value="women">Women</option>
-        <option value="men">Men</option>
+        <option value="women" <?php if ($selectedCategory == "women") echo "selected"; ?>>Women</option>
+        <option value="men" <?php if ($selectedCategory == "men") echo "selected"; ?>>Men</option>
       </select>
     </div>
-
-
   </div>
-
-
   <main>
     <div class="item-count">
-      <p>Items Available: <?php echo $maxID; ?> </p>
+      <p>Items Available: <?php echo $maxID; ?></p>
       <!-- Adjust the number of items as needed -->
     </div>
     <!-- Row grid -->
-
+ 
     <div class="product-grid">
       <?php foreach ($products as $product) : ?>
         <div class="product-card">
@@ -270,14 +264,14 @@
         </div>
       <?php endforeach; ?>
     </div>
-
+ 
 </body>
-
-
+ 
+ 
 <script>
   // Select the dropdown menu
   let selectmenu = document.querySelector('#categoryDropdown');
-
+ 
   // Listen for the change event on the dropdown menu
   selectmenu.addEventListener('change', function(e) {
     // Get the selected category value
@@ -286,5 +280,5 @@
     window.location.href = 'Women.php?category=' + selectedCategory;
   });
 </script>
-
+ 
 <?php include "./partials/footer.html" ?>

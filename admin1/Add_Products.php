@@ -32,7 +32,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $tempFilePath = $_FILES['ProductImage']['tmp_name'];
 
 
-            $uploadPath = "../admin/imgUploads/" . basename($productImage);
+            $uploadPath = "../admin1/imgUploads/" . basename($productImage);
             if (move_uploaded_file($tempFilePath, $uploadPath)) {
 
                 $sql = "INSERT INTO products (Product_Name, Product_Description, Product_Size, Product_Price, Product_Quantity, Product_Category, Product_Img_URL)
@@ -47,6 +47,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     echo "Product Quantity: $productQty<br>";
                     echo "Product Category: $productCategory<br>";
                     echo "Product Image: $uploadPath<br>";
+                    header("location: index.php");
+                    exit();
                 } else {
                     echo "Error: " . $sql . "<br>" . mysqli_error($database);
                 }

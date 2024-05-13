@@ -1,3 +1,23 @@
+<?php
+require_once "db_connection.php";
+session_start();
+
+if (isset($_COOKIE["purchase"])) {
+    $cart = json_decode($_COOKIE["purchase"], true);
+    foreach ($cart as $item) {
+      $user_purchase_quantity = $item["quantity"];
+      $sql = "UPDATE products SET Product_Quantity = Product_Quantity - $user_purchase_quantity WHERE Product_ID = " . $item["id"];
+      if (!mysqli_query($connection, $sql)) {
+          return;
+      }
+    }
+    setcookie("purchase", "", -1, "/");
+    unset($_SESSION["cart"]);
+} else {
+    header("Location: Women.php");
+}
+?>
+
 <!DOCTYPE html>
 <html lang="en">
   <head>

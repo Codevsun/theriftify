@@ -18,6 +18,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
       unset($_SESSION['cart'][$delete_product_id]);
     }
   }
+
+  if (isset($_POST['product_id']) && isset($_POST['quantity'])) {
+    $product_id = $_POST['product_id'];
+    $quantity = $_POST['quantity'];
+    
+    // Update the session cart
+    if (isset($_SESSION['cart'][$product_id])) {
+      $_SESSION['cart'][$product_id] = $quantity;
+    }
+  }
 }
 
 if (isset($_SESSION['cart']) && !empty($_SESSION['cart'])) {
@@ -37,7 +47,8 @@ if (isset($_SESSION['cart']) && !empty($_SESSION['cart'])) {
         'description' => $row['Product_Description'],
         'price' => $row['Product_Price'],
         'image' => $row['Product_Img_URL'],
-        'quantity' => $quantity
+        'quantity' => $quantity,
+        'max_quantity' => $row['Product_Quantity']
       );
       $products[] = $product;
       $totalQuantity += $quantity;
@@ -47,6 +58,8 @@ if (isset($_SESSION['cart']) && !empty($_SESSION['cart'])) {
 } else {
   echo "Your shopping cart is empty!";
 }
+
+ob_start();
 ?>
 
 <!DOCTYPE html>
@@ -68,6 +81,74 @@ if (isset($_SESSION['cart']) && !empty($_SESSION['cart'])) {
 </head>
 
 <body>
+  <script>
+    function incrementQuantity(productId) {
+      var quantityDisplay = document.getElementById("quantityDisplay" + productId);
+      var quantity = parseInt(quantityDisplay.innerText);
+      var maxQuantity = parseInt(document.getElementById("quantityDisplay" + productId).parentNode.getAttribute("data-max"));
+
+      if (quantity < maxQuantity) {
+        quantity++;
+        quantityDisplay.innerText = quantity;
+        submitQuantityChange(productId, quantity);
+        recalculateTotalPrice();
+      } else {
+        alert("Maximum available quantity reached.");
+      }
+    }
+
+    function decrementQuantity(productId) {
+      var quantityDisplay = document.getElementById("quantityDisplay" + productId);
+      var quantity = parseInt(quantityDisplay.innerText);
+      if (quantity > 1) {
+        quantity--;
+        quantityDisplay.innerText = quantity;
+        submitQuantityChange(productId, quantity);
+        recalculateTotalPrice();
+      }
+    }
+
+    function recalculateTotalPrice() {
+        var total = 0;
+        var items = document.querySelectorAll(".item");
+        
+        items.forEach(function(item) {
+            var price = parseFloat(item.getAttribute("data-price")); // Ensure price is stored in an attribute
+            var quantityDisplay = item.querySelector(".quantityDisplay");
+            var quantity = parseInt(quantityDisplay.innerText);
+            total += price * quantity;
+        });
+
+        // Display the total price in the appropriate element
+        document.getElementById("totalPrice").innerText = "$" + total;
+    }
+
+    function submitQuantityChange(productId, newQuantity) {
+        // Create a form dynamically
+        var form = document.createElement('form');
+        form.style.display = 'none';
+        form.method = 'POST';
+        form.action = window.location.href; // Submit to the same page or specify the endpoint
+
+        // Add the product ID field
+        var idInput = document.createElement('input');
+        idInput.type = 'hidden';
+        idInput.name = 'product_id';
+        idInput.value = productId;
+        form.appendChild(idInput);
+
+        // Add the quantity field
+        var quantityInput = document.createElement('input');
+        quantityInput.type = 'hidden';
+        quantityInput.name = 'quantity';
+        quantityInput.value = newQuantity;
+        form.appendChild(quantityInput);
+
+        // Append and submit the form
+        document.body.appendChild(form);
+        form.submit();
+    }
+  </script>
   <!-- Navbar -->
   <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
     <div class="container-fluid">
@@ -141,11 +222,11 @@ if (isset($_SESSION['cart']) && !empty($_SESSION['cart'])) {
               </div>
               <div class="col">
                 <!-- Quantity control buttons -->
-                <div class="col">
+                <div class="col item" data-price="<?php echo $product['price']; ?>" data-max="<?php echo $product['max_quantity']; ?>">
                   <!-- Quantity control buttons -->
-                  <a href="#" onclick="decrementQuantity()">-</a>
-                  <a href="#" id="quantityDisplay" class="border"><?php echo $product['quantity']; ?></a>
-                  <a href="#" onclick="incrementQuantity()">+</a>
+                  <a href="#" onclick="decrementQuantity(<?php echo $product['id']; ?>); return false;">-</a>
+                  <span id="quantityDisplay<?php echo $product['id'] ?>" class="quantityDisplay border"><?php echo $product['quantity']; ?></span>
+                  <a href="#" onclick="incrementQuantity(<?php echo $product['id']; ?>); return false;">+</a>
                 </div>
 
               </div>
@@ -187,13 +268,27 @@ if (isset($_SESSION['cart']) && !empty($_SESSION['cart'])) {
         </form>
         <div class="row" style="border-top: 1px solid rgba(0, 0, 0, 0.1); padding: 2vh 0">
           <div class="col">TOTAL PRICE</div>
-          <div class="col text-right">$ <?php echo $totalPrice; ?></div>
+          <div class="col text-right" id="totalPrice">$<?php echo $totalPrice; ?></div>
         </div>
-        <a href="thanks.html"> <button class="btn">CHECKOUT</button></a>
+          <form action="thanks.php" method="POST" onsubmit="return setPurchaseCookie();">
+            <button class="btn">CHECKOUT</button>
+        </form>
       </div>
     </div>
   </div>
 
+  <script>
+    function setPurchaseCookie() {
+      document.cookie = "purchase=" + encodeURIComponent(JSON.stringify(<?php echo json_encode($products); ?>));
+      return true;
+    }
+  </script>
+  <?php
+    // Now you can set cookies or modify headers
+    setcookie("purchase", json_encode($products));
+
+    ob_end_flush(); // Send output buffer and turn off buffering
+  ?>
   <!-- Footer -->
 
   <footer class="bg-dark text-light py-3 text-center fixed-bottom">

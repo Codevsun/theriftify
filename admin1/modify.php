@@ -55,7 +55,7 @@ $conn->close();
     <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
         <div class="container-fluid">
             <!-- Brand centered -->
-            <a href="index.html" class="navbar-brand">THRIFTIFY</a>
+            <a href="index.php" class="navbar-brand">THRIFTIFY</a>
             <!-- Navbar toggler -->
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
@@ -64,7 +64,7 @@ $conn->close();
                 <ul class="navbar-nav ms-auto">
                     <!-- Left side of navbar -->
                     <li class="nav-item">
-                        <a href="index.html" class="nav-link"><i class="bi bi-house" style="margin-right: 20px"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-house" viewBox="0 0 16 16">
+                        <a href="index.php" class="nav-link"><i class="bi bi-house" style="margin-right: 20px"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-house" viewBox="0 0 16 16">
                                     <path d="M8.707 1.5a1 1 0 0 0-1.414 0L.646 8.146a.5.5 0 0 0 .708.708L2 8.207V13.5A1.5 1.5 0 0 0 3.5 15h9a1.5 1.5 0 0 0 1.5-1.5V8.207l.646.647a.5.5 0 0 0 .708-.708L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293zM13 7.207V13.5a.5.5 0 0 1-.5.5h-9a.5.5 0 0 1-.5-.5V7.207l5-5z" />
                                 </svg></i>Home</a>
                     </li>
@@ -146,7 +146,7 @@ $conn->close();
                         <div class="row">
                             <div class="col-md-auto">
                                 <button type="submit" class="btn btn-dark me-1">Save Changes</button>
-                                <a href="index.html" class="btn btn-light">Cancel</a>
+                                <a href="index.php" class="btn btn-light">Cancel</a>
                             </div>
                         </div>
                     </div>
