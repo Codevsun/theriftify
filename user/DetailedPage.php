@@ -41,8 +41,23 @@ if (isset($_GET['id'])) {
       $_SESSION['cart'] = array($product['id'] => $quantity);
     }
   }
+
+  // Handling checkout
+  if (isset($_POST['checkout'])) {
+    // Set the order data in a cookie
+    $order = array(
+      'order' => $product['name'],
+      'quantity' => $_POST['quantity'],
+      'total' => $product['price'] * $_POST['quantity']
+    );
+    setcookie('user_order', serialize(array('orders' => array($order))), time() + (86400 * 30), "/"); // 86400 = 1 day
+    // Redirect to the thank you page
+    header("Location: thanks.php");
+    exit();
+  }
 }
 ?>
+
 
 
 <!DOCTYPE html>

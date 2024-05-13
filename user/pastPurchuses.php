@@ -19,57 +19,50 @@
 
   <body>
     <!-- Navbar -->
-      <?php include "./partials/navbar.html" ?>
+    <?php include "./partials/navbar.html" ?>
 
     <div class="d-flex justify-content-between">
       <div class="dropdown" style="margin-top: 60px; margin-bottom: 50px"></div>
     </div>
 
-    <!-- <br> -->
     <div style="margin-bottom: 550px">
       <div class="m-2">
-        <h1>Past Purchuses</h1>
+        <h1>Past Purchases</h1>
         <div class="table-responsive">
-          <!-- <table class="table" id="pastPurchasesTable">
+          <table class="table" id="pastPurchasesTable">
             <thead>
               <tr>
                 <th>Order</th>
                 <th>Quantity</th>
                 <th>Total</th>
-               </tr>
-            </thead> -->
-            <?php
-// Check if the order cookie is set
-if(isset($_COOKIE['user_order'])) {
-    // Unserialize the order data from the cookie
-    $orderData = unserialize($_COOKIE['user_order']);
-    // Access the orders
-    $orders = $orderData['orders'];
-
-    // Check if there are any orders
-    if(!empty($orders)) {
-        // Display the table header
-        echo "<table class='table' id='pastPurchasesTable'>";
-        echo "<tr><th>Order</th><th>Quantity</th><th>Total</th></tr>";
-
-        // Loop through each order and display it in a table row
-        foreach ($orders as $order) {
-            $orderName = $order['order'];
-            $quantity = $order['purchase_history'];
-            $total = $order['total'];
-            echo "<tr><td>$orderName</td><td>$quantity</td><td>$total</td></tr>";
-        }
-
-        echo "</table>";
-    } else {
-        echo "No orders yet.";
-    }
-} else {
-    echo "Order cookie is not set.";
-}
-?>
-
-          <!-- </table> -->
+              </tr>
+            </thead>
+            <tbody>
+              <?php
+              // Check if the order cookie is set
+              if(isset($_COOKIE['purchase'])) {
+                  // Retrieve and decode the purchase data from the cookie
+                  $purchaseData = json_decode($_COOKIE['purchase'], true);
+                  
+                  // Check if there are any purchases
+                  if(!empty($purchaseData)) {
+                      // Loop through each purchase and display it in a table row
+                      foreach ($purchaseData as $purchase) {
+                          echo "<tr>";
+                          echo "<td>" . $purchase['name'] . "</td>";
+                          echo "<td>" . $purchase['quantity'] . "</td>";
+                          echo "<td>$" . $purchase['price'] * $purchase['quantity'] . "</td>";
+                          echo "</tr>";
+                      }
+                  } else {
+                      echo "<tr><td colspan='3'>No purchases yet.</td></tr>";
+                  }
+              } else {
+                  echo "<tr><td colspan='3'>Purchase cookie is not set.</td></tr>";
+              }
+              ?>
+            </tbody>
+          </table>
         </div>
       </div>
 
@@ -90,3 +83,5 @@ if(isset($_COOKIE['user_order'])) {
       </a>
     </div>
     <?php include "./partials/footer.html" ?>
+  </body>
+</html>

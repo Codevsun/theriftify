@@ -278,11 +278,16 @@ ob_start();
   </div>
 
   <script>
-    function setPurchaseCookie() {
-      document.cookie = "purchase=" + encodeURIComponent(JSON.stringify(<?php echo json_encode($products); ?>));
-      return true;
-    }
-  </script>
+  function setPurchaseCookie() {
+    var products = <?php echo json_encode($products); ?>;
+    var expiryDate = new Date();
+    // Set the cookie to expire in 7 days
+    expiryDate.setDate(expiryDate.getDate() + 7);
+    document.cookie = "purchase=" + encodeURIComponent(JSON.stringify(products)) + ";expires=" + expiryDate.toUTCString() + ";path=/;Secure";
+    return true;
+  }
+</script>
+
   <?php
     // Now you can set cookies or modify headers
     setcookie("purchase", json_encode($products));
