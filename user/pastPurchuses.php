@@ -67,7 +67,7 @@
       </div>
 
       <!-- Footer -->
-      <a href="Women.html">
+      <a href="Women.php">
         <button
           type="button"
           class="btn btn-secondary"

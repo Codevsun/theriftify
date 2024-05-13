@@ -130,10 +130,7 @@ if (mysqli_num_rows($result) > 0) {
   <!-- Buttons with Dropdown Menus -->
   <div class="d-flex justify-content-between">
     <div class="dropdown" style="margin-top: 60px">
-      <ul class="dropdown-menu">
-        <li><a class="dropdown-item" href="Women.php">Women</a></li>
-        <li><a class="dropdown-item" href="Men.html">Men</a></li>
-      </ul>
+      
     </div>
   </div>
 </body>
