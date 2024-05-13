@@ -35,7 +35,7 @@
 
     if ($count == 1) {
       $_SESSION['user'] = $username; // Fix the typo '$_SESSOIN' to $_SESSION
-      header("Location: index.html");
+      header("Location: index.php");
     } else {
       echo "<script type='text/javascript'>alert('Email or/and password is incorrect, please try again!');</script>";
     }

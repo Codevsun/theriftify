@@ -11,41 +11,41 @@ $products = array();
 require_once "db_connection.php";
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    if (isset($_POST['delete_product_id'])) {
-        $delete_product_id = $_POST['delete_product_id'];
-        // Remove the product from the cart if it exists
-        if (isset($_SESSION['cart'][$delete_product_id])) {
-            unset($_SESSION['cart'][$delete_product_id]);
-        }
+  if (isset($_POST['delete_product_id'])) {
+    $delete_product_id = $_POST['delete_product_id'];
+    // Remove the product from the cart if it exists
+    if (isset($_SESSION['cart'][$delete_product_id])) {
+      unset($_SESSION['cart'][$delete_product_id]);
     }
+  }
 }
 
 if (isset($_SESSION['cart']) && !empty($_SESSION['cart'])) {
-    $products = []; // Array to hold product details
+  $products = []; // Array to hold product details
 
-    foreach ($_SESSION['cart'] as $product_id => $quantity) {
-        $stmt = $connection->prepare("SELECT * FROM products WHERE Product_ID = ?");
-        $stmt->bind_param("s", $product_id);
-        $stmt->execute();
-        $result = $stmt->get_result();
+  foreach ($_SESSION['cart'] as $product_id => $quantity) {
+    $stmt = $connection->prepare("SELECT * FROM products WHERE Product_ID = ?");
+    $stmt->bind_param("s", $product_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
 
-        if ($result && $result->num_rows > 0) {
-            $row = $result->fetch_assoc();
-            $product = array(
-                'id' => $row['Product_ID'],
-                'name' => $row['Product_Name'],
-                'description' => $row['Product_Description'],
-                'price' => $row['Product_Price'],
-                'image' => $row['Product_Img_URL'],
-                'quantity' => $quantity
-            );
-            $products[] = $product;
-            $totalQuantity += $quantity;
-            $totalPrice += $product['price'] * $quantity;
-        }
+    if ($result && $result->num_rows > 0) {
+      $row = $result->fetch_assoc();
+      $product = array(
+        'id' => $row['Product_ID'],
+        'name' => $row['Product_Name'],
+        'description' => $row['Product_Description'],
+        'price' => $row['Product_Price'],
+        'image' => $row['Product_Img_URL'],
+        'quantity' => $quantity
+      );
+      $products[] = $product;
+      $totalQuantity += $quantity;
+      $totalPrice += $product['price'] * $quantity;
     }
+  }
 } else {
-    echo "Your shopping cart is empty!";
+  echo "Your shopping cart is empty!";
 }
 ?>
 
@@ -129,36 +129,42 @@ if (isset($_SESSION['cart']) && !empty($_SESSION['cart'])) {
           </div>
         </div>
         <div class="row border-top border-bottom">
-        <?php foreach ($products as $product): ?>
-        <div class="row main align-items-center">
-            <div class="col-2">
+          <?php foreach ($products as $product) : ?>
+            <div class="row main align-items-center">
+              <div class="col-2">
                 <!-- Display product image -->
                 <img class="img-fluid" src="<?php echo $product['image']; ?>" />
-            </div>
-            <div class="col">
+              </div>
+              <div class="col">
                 <!-- Display products name -->
                 <div class="row"><?php echo $product['name']; ?></div>
-            </div>
-            <div class="col">
+              </div>
+              <div class="col">
                 <!-- Quantity control buttons -->
-                <a href="#">-</a><a href="#" class="border"><?php echo $product['quantity']; ?></a><a href="#">+</a>
-            </div>
-            <form class="col" method="POST">
+                <div class="col">
+                  <!-- Quantity control buttons -->
+                  <a href="#" onclick="decrementQuantity()">-</a>
+                  <a href="#" id="quantityDisplay" class="border"><?php echo $product['quantity']; ?></a>
+                  <a href="#" onclick="incrementQuantity()">+</a>
+                </div>
+
+              </div>
+              <form class="col" method="POST">
                 $ <?php echo $product['price']; ?>
                 <button type="submit" class="close" style="background-color: transparent; border: none;">x</button>
                 <input type="hidden" name="delete_product_id" value="<?php echo $product['id']; ?>" style="display: none;">
-            </form>
+              </form>
+            </div>
+            <?php
+            // Update total quantity and price
+            $totalQuantity += $product['quantity'];
+            ?>
+          <?php endforeach; ?>
         </div>
-        <?php
-        // Update total quantity and price
-        $totalQuantity += $product['quantity'];
-        ?>
-    <?php endforeach; ?>
-</div>
 
         <div class="row">
           <div class="row main align-items-center">
-     
+
           </div>
         </div>
       </div>
@@ -168,8 +174,7 @@ if (isset($_SESSION['cart']) && !empty($_SESSION['cart'])) {
         </div>
         <hr />
         <div class="row">
-          <div class="col" style="padding-left: 0">ITEMS 2</div>
-          <div class="col text-right">$ 646.75</div>
+
         </div>
         <form>
           <p>SHIPPING</p>
@@ -218,6 +223,7 @@ if (isset($_SESSION['cart']) && !empty($_SESSION['cart'])) {
     </div>
   </footer>
 </body>
+
 
 <!-- Bootstrap JS and dependencies -->
 
